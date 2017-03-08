@@ -1,1 +1,1 @@
-# elasticIntro
+# Introduction to Elasticsearch
