@@ -24,7 +24,7 @@ public class App {
 			client.addTransportAddress( new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
 			
 			//Delete the index
-			client.admin().indices().delete(new DeleteIndexRequest("twitter")).actionGet();
+			//client.admin().indices().delete(new DeleteIndexRequest("twitter")).actionGet();
 			
 			//Index using Elasticsearch helpers
 			IndexResponse responseIndexJava = client.prepareIndex("twitter", "tweet", "1")
@@ -65,42 +65,6 @@ public class App {
 			        .setQuery(matchQuery("user", "Alice"))                 // Match Query
 			        .get();
 			System.out.println("responseSearch1:\t" + responseSearch1);
-			
-			//Search for user Alice using Term query
-			//Query string does not get analyzed
-			SearchResponse responseSearch2 = client.prepareSearch("twitter")
-			        .setTypes("tweet")
-			        .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-			        .setQuery(termQuery("user", "Alice"))                 // Term Query
-			        .get();
-			System.out.println("responseSearch2:\t" + responseSearch2);
-			
-			//Search for 'out trying' using Match query
-			//Does not have to be in the exact order
-			SearchResponse responseSearch3 = client.prepareSearch("twitter")
-			        .setTypes("tweet")
-			        .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-			        .setQuery(matchQuery("message", "out try"))                 // Match Query
-			        .get();
-			System.out.println("responseSearch3:\t" + responseSearch3);
-			
-			//Search for 'out trying' using Match Phrase query
-			//It has to be in the exact order
-			SearchResponse responseSearch4 = client.prepareSearch("twitter")
-			        .setTypes("tweet")
-			        .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-			        .setQuery(matchPhraseQuery("message", "out trying"))        // Match Phrase Query
-			        .get();
-			System.out.println("responseSearch4:\t" + responseSearch4);
-			
-			//Search for 'try out' using Match query
-			//Stemmer enables the word 
-			SearchResponse responseSearch5 = client.prepareSearch("twitter")
-			        .setTypes("tweet")
-			        .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-			        .setQuery(matchQuery("message", "drive"))    // Match Query
-			        .get();
-			System.out.println("responseSearch5:\t" + responseSearch5);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
