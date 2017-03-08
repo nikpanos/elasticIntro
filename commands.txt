@@ -1,0 +1,247 @@
+GET _search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+DELETE /my_index
+
+PUT my_index
+{
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "user": {
+          "type":  "keyword"
+        },
+        "message_analyzed": {
+          "type":     "text",
+          "analyzer": "english",
+          "fielddata": true
+        },
+        "message": {
+          "type":     "text",
+          "analyzer": "standard",
+          "fielddata": true
+        }
+      }
+    }
+  }
+}
+
+PUT my_index/my_type/1
+{
+  "user": "Nick Smith",
+  "message": "Hello world",
+  "message_analyzed": "Hello world",
+  "likes": 15
+}
+
+GET my_index/my_type/1
+
+PUT my_index/my_type/2
+{
+  "user": "Jim Smith",
+  "message": "Trying Elasticsearch",
+  "message_analyzed": "Trying Elasticsearch",
+  "likes": 9
+}
+
+PUT my_index/my_type/3
+{
+  "user": "John Snow",
+  "message": "Hello by Elasticsearch",
+  "message_analyzed": "Hello by Elasticsearch",
+  "likes": 16
+}
+
+PUT my_index/my_type/4
+{
+  "user": "John Snow",
+  "message": "Elasticsearch works!",
+  "message_analyzed": "Elasticsearch works!",
+  "likes": 157
+}
+
+PUT my_index/my_type/5
+{
+  "user": "John Snow",
+  "message": "working on Elasticsearch",
+  "message_analyzed": "working on Elasticsearch",
+  "likes": 157
+}
+
+GET my_index/my_type/_search
+{
+  "query": {
+    "match": {
+      "message": {
+        "query": "world hello"
+      }
+    }
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "query": {
+    "match": {
+      "message_analyzed": {
+        "query": "elasticsearch is working",
+        "operator" : "and"
+      }
+    }
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "query": {
+    "match_phrase": {
+      "message": {
+        "query": "hello world"
+      }
+    }
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "query": {
+    "match_phrase": {
+      "message_analyzed": {
+        "query": "hello worlds"
+      }
+    }
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "query": {
+    "match_phrase_prefix": {
+      "message": {
+        "query": "hello w"
+      }
+    }
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "query": {
+    "term": {"user": "Nick Smith"}
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "query": {
+    "term": {"message": "Hello"}
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "query": {
+    "term": {"message_analyzed": "work"}
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "query": {
+    "range": {
+      "likes": {
+        "lt": 16
+      }
+    }
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "message": {
+            "query": "hello world"
+          }
+        }
+      },
+      "filter": {
+        "range": {
+          "likes": {
+            "lt": 16
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+GET my_index/my_type/_search
+{
+  "size": 0,
+  "aggs": {
+    "group_by_terms_in_text": {
+      "terms": {
+        "field": "message"
+      }
+    }
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "size": 0,
+  "aggs": {
+    "group_by_terms_in_text": {
+      "terms": {
+        "field": "message_analyzed"
+      }
+    }
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "size": 0,
+  "aggs": {
+    "group_by_terms_in_text": {
+      "terms": {
+        "field": "message"
+      },
+      "aggs": {
+        "avg_likes": {
+          "avg": {
+            "field": "likes"
+          }
+        }
+      }
+    }
+  }
+}
+
+GET my_index/my_type/_search
+{
+  "size": 0,
+  "aggs": {
+    "my-terms" : {
+      "filters" : {
+        "other_bucket_key": "other_messages",
+        "filters" : {
+          "worldFilter" : { "term" : { "message" : "world"}},
+          "helloFilter" : { "term" : { "message" : "hello"}}
+        }
+      }
+    }
+  }
+}
+
+
+
