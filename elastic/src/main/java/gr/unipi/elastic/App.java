@@ -7,7 +7,8 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -15,13 +16,15 @@ import static org.elasticsearch.index.query.Operator.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 
 public class App {
 	public static void main(String[] args) throws UnknownHostException {
 		try (PreBuiltTransportClient client = new PreBuiltTransportClient(Settings.EMPTY)) {
-			client.addTransportAddress( new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
+			client.addTransportAddress(new TransportAddress(InetAddress.getByName("localhost"), 9300));
+			//client.addTransportAddress( );
 			
 			//Delete the index
 			//client.admin().indices().delete(new DeleteIndexRequest("twitter")).actionGet();
@@ -46,7 +49,7 @@ public class App {
 			        "\"favorites\":\"9\"" +
 			    "}";
 			IndexResponse responseIndexJson = client.prepareIndex("twitter", "tweet", "2")
-			        .setSource(json)
+			        .setSource(json, XContentType.JSON)
 			        .get();
 			System.out.println(responseIndexJson);
 			
